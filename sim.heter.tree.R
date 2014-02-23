@@ -45,9 +45,13 @@ sim.het.tree <- function(n.tax = 50, tree.age = 50, old.cal = 10){
 }
 
 
-for(i in 1:20){
-tr <- sim.het.tree(n.tax = 20, tree.age = 50, old.cal = 30)
-plot(tr, show.tip.label = F)
-tiplabels(round(allnode.times(tr, tipsonly = T), 1), cex = 0.7)
-system("sleep 2")
+for(i in 1:100){
+    tr <- sim.het.tree(n.tax = 50, tree.age = 50, old.cal = 5)
+    tr$tip.label <- paste(tr$tip.label, round(allnode.times(tr, tipsonly = T), 2), sep = "@")
+    write.tree(tr, file = "het_shallow_cal.trees", append = T, tree.names = T)
+    plot(tr, show.tip.label = F)
+    tiplabels(round(allnode.times(tr, tipsonly = T), 1), cex = 0.7)
+    print(i/100)
 }
+
+

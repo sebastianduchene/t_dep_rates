@@ -137,10 +137,9 @@ Plot some diagnostics of *Example 1*
 
 ```r
 rem_burnin <- 100:nrow(ch1)
-par(mfrow = c(2, 2))
-
+par(mfrow = c(2, 1))
 plot(ch1[, 1], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
-    mu)), main = "Fig 1.")
+    mu)), main = "Fig 1A.")
 lines(x = 1:10000, y = rep(mean(x), 10000), col = "red", lwd = 2)
 text(5000, 7, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch1[, 
     1])), 2), "\nThis MCMC has sufficient sampling \nfrom the stationary distribution"), 
@@ -150,9 +149,15 @@ text(1500, 8, labels = "True value", col = "red", cex = 0.7)
 hist(ch1[rem_burnin, 1], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Estimate of ", 
     mu)), main = "", freq = F)
 lines(x = c(mean(x), mean(x)), y = c(0, 2), col = "red", lwd = 2)
+```
 
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-101.png) 
+
+```r
+
+par(mfrow = c(2, 1))
 plot(ch1[, 2], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
-    sigma)), main = "")
+    sigma)), main = "Fig 1B.")
 lines(x = 1:10000, y = rep(sd(x), 10000), col = "red", lwd = 2)
 
 text(5000, 3.5, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch1[, 
@@ -164,7 +169,7 @@ hist(ch1[rem_burnin, 2], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Est
 lines(x = c(sd(x), sd(x)), y = c(0, 2), col = "red", lwd = 2)
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-102.png) 
 
 This is an ideal run. The MCMC has converged to the stationary distribution, there is low autocorrelation for MCMC samples, the parameter estimates appear accurate and precise, and we have ESS > 200. Importantly, the true value is contained within the parameter estimates (this is unknown in real data sets).
 
@@ -187,24 +192,42 @@ Run the MCMC and plot the run.
 ch2 <- mcmc_bayesian(startvals = c(1, 3), iterations = 10000)
 ```
 
-```
+
+```r
+par(mfrow = c(2, 1))
 rem_burnin <- 100:nrow(ch2)
-plot(ch2[, 1], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", mu)), main = "Fig 2.")
-lines(x = 1:10000,y = rep(mean(x), 10000), col = "red", lwd = 2) 
-text(5000, 4, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch2[, 1])), 2), "\nLow mixing: Increase ESS by \nrunning a longer chain\n and/or increasing sampling frequency"), cex = 0.7)
+plot(ch2[, 1], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
+    mu)), main = "Fig 2A.")
+lines(x = 1:10000, y = rep(mean(x), 10000), col = "red", lwd = 2)
+text(5000, 4, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch2[, 
+    1])), 2), "\nLow mixing: Increase ESS by \nrunning a longer chain\n and/or increasing sampling frequency"), 
+    cex = 0.7)
 text(1500, 8, labels = "True value", col = "red", cex = 0.7)
 
-hist(ch2[rem_burnin, 1], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Estimate of ", mu)), main = "", freq = F)
+hist(ch2[rem_burnin, 1], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Estimate of ", 
+    mu)), main = "", freq = F)
 lines(x = c(mean(x), mean(x)), y = c(0, 4), col = "red", lwd = 2)
+```
 
-plot(ch2[, 2], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", sigma)), main = "")
-lines(x = 1:10000,y = rep(sd(x), 10000), col = "red", lwd = 2) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-131.png) 
 
-text(5000, 3.5, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch2[, 2])), 2)), cex = 0.7)
+```r
 
-hist(ch2[rem_burnin, 2], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Estimate of ", sigma)), main = "", freq = F)
+par(mfrow = c(2, 1))
+plot(ch2[, 2], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
+    sigma)), main = "Fig 2B.")
+lines(x = 1:10000, y = rep(sd(x), 10000), col = "red", lwd = 2)
+
+text(5000, 3.5, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch2[, 
+    2])), 2)), cex = 0.7)
+
+hist(ch2[rem_burnin, 2], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Estimate of ", 
+    sigma)), main = "", freq = F)
 lines(x = c(sd(x), sd(x)), y = c(0, 4), col = "red", lwd = 2)
 ```
+
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-132.png) 
+
 It appears that the MCMC has reached the stationary distribution, but it is not moving eficiently around the parameter space, resulting in low ESS. This can be easily solved by increasing the chain length. An other solution is to increase the sampling frequency for analyses where this can be modified.
 
 
@@ -229,47 +252,39 @@ ch3 <- mcmc_bayesian(startvals = c(5, 3), iterations = 10000)
 Produce similar plots to those of the previous examples:
 
 ```r
+par(mfrow = c(2, 1))
 rem_burnin <- 100:nrow(ch3)
 plot(ch3[, 1], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
-    mu)), main = "Fig 3.")
+    mu)), main = "Fig 3A.")
 lines(x = 1:10000, y = rep(mean(x), 10000), col = "red", lwd = 2)
 text(6500, 7, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch3[, 
     1])), 2), "\nHigh autocorrelation:\n Increase ESS by reducing \nsampling frequency AND \nincreasing chain length"), 
     cex = 0.7)
 text(1500, 8, labels = "True value", col = "red", cex = 0.7)
-```
-
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
-
-```r
 
 hist(ch3[rem_burnin, 1], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Estimate of ", 
     mu)), main = "", freq = F)
 lines(x = c(mean(x), mean(x)), y = c(0, 4), col = "red", lwd = 2)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-152.png) 
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-161.png) 
 
 ```r
 
+par(mfrow = c(2, 1))
 plot(ch3[, 2], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
-    sigma)), main = "")
+    sigma)), main = "Fig 3B.")
 lines(x = 1:10000, y = rep(sd(x), 10000), col = "red", lwd = 2)
 
 text(7000, 4, labels = paste("The ESS is: ", round(effectiveSize(mcmc(ch3[, 
     2])), 2)), cex = 0.7)
-```
-
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-153.png) 
-
-```r
 
 hist(ch3[rem_burnin, 2], col = rgb(0, 0, 0.5, 0.7), xlab = expression(paste("Estimate of ", 
     sigma)), main = "", freq = F)
 lines(x = c(sd(x), sd(x)), y = c(0, 4), col = "red", lwd = 2)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-154.png) 
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-162.png) 
 
 
 The MCMC is moving frequently around the parameter space, but these moves are ineffient in that they do not find the stationary distribution. There is a high level of autocorrelation between steps, resulting in low ESS. As in *Example 2*, the solution is to increase the MCMC chain length, but in this case it is also useful to reduce the sampling frequency to avoid very large output files.

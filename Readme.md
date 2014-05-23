@@ -13,7 +13,7 @@ Define some code to set up the MCMC
 Load the Coda package to estimate the Effective Sample Size.
 
 
-```
+```coffee
 library(coda)
 ```
 
@@ -21,7 +21,7 @@ library(coda)
 Define some data. We will estimate the mean and standard deviation of these data which were sampled from a normal distribution with mean = 10 and sd = 2. The exact values may vary because of the nature of the simulation and because we are only using 100 samples. In practice, it is preferable to have more data so that the prior has a lower influence on the posterior. 
  
 
-```
+```coffee
 set.seed(18002262)
 x <- rnorm(100, 10, 2)
 ```
@@ -30,19 +30,19 @@ x <- rnorm(100, 10, 2)
 Although this example is trivial, it serves to illustrate the effectiveness of the MCMC. In particular, we can determine the true values of the parameters of interest empirically. In this case we are estimating the mean and the standard deviation. These will be the "expected" values.
 
 
-```
+```coffee
 mean(x)
 ```
 
-```
+```coffee
 ## [1] 9.963
 ```
 
-```
+```coffee
 sd(x)
 ```
 
-```
+```coffee
 ## [1] 1.808
 ```
 
@@ -50,7 +50,7 @@ sd(x)
 Next, we define a likelihood function based on a model. In this case the model is a normal distribution, which matches that used to generate the data. Note that we have defined the model, and that we are interested in the parameters of the model (mean and standard deviation). We can test different models, such as different probability distributuons, but this is beyond the scope of this example.
 
 
-```
+```coffee
 likelihood <- function(param) {
     mean.model <- param[1]
     sd.model <- param[2]
@@ -64,7 +64,7 @@ likelihood <- function(param) {
 Define the prior. We will use a prior with low information content, such as a uniform distribution for both parameters, for the mean it is bounded between 0 and 15 and for the standard deviation it is bounded at 0 and 5.
 
 
-```
+```coffee
 prior <- function(param) {
     mean.param <- param[1]
     sd.param <- param[2]
@@ -78,7 +78,7 @@ prior <- function(param) {
 
 Now define a proposal function. This determines how the MCMC will move around the parameter space. With an optimal proposal function the MCMC should converge to the true parameter values very easily, but in practice this is very difficult to define, and MCMC analyses need tuning to obtain reliable estimates.
 
-```
+```coffee
 proposal.function <- function(param) {
     return(c(rnorm(1, mean = param[1], sd = 0.5), abs(rnorm(1, mean = param[2], 
         sd = 0.5))))  # the abs is so that there is to avoid negative proposals for the starndard deviation
@@ -88,7 +88,7 @@ proposal.function <- function(param) {
 
 The last function is the calculation of the posterior, which is the product of the likelihood and the prior. In this example we add them because we are using log transformations.
 
-```
+```coffee
 posterior <- function(param) {
     return(likelihood(param) + prior(param))
 }
@@ -97,7 +97,7 @@ posterior <- function(param) {
 
 Finally, we define a simple MCMC with the functions above, using the Metropolis-Hastings algorithm. This MCMC samples every step, but it could be modified to reduce the sampling frequency.
 
-```
+```coffee
 mcmc_bayesian <- function(startvals, iterations = 50000) {
     chain <- matrix(NA, nrow = iterations, ncol = 5)
     colnames(chain) <- c("mean", "sd", "likelihood", "posterior", "prior")
@@ -128,14 +128,14 @@ Example 1
 In this example we use the original proposal function and run the MCMC for 10000 steps, as before.
 
 
-```
+```coffee
 ch1 <- mcmc_bayesian(startvals = c(5, 3), iterations = 10000)
 ```
 
 
 Plot some diagnostics of *Example 1*
 
-```
+```coffee
 rem_burnin <- 100:nrow(ch1)
 par(mfrow = c(2, 1))
 plot(ch1[, 1], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
@@ -153,7 +153,7 @@ lines(x = c(mean(x), mean(x)), y = c(0, 2), col = "red", lwd = 2)
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-101.png) 
 
-```
+```coffee
 
 par(mfrow = c(2, 1))
 plot(ch1[, 2], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
@@ -179,7 +179,7 @@ Example 2
 We can use a sloppy proposal function that will make large moves around the parameter space, resulting in inefficent sampling. This can be typically overcome by running longer chains.
 
 
-```
+```coffee
 proposal.function <- function(param) {
     return(c(rnorm(1, mean = param[1], sd = 5), abs(rnorm(1, mean = param[2], 
         sd = 5))))  # the abs is so that there is to avoid negative proposals for the starndard deviation
@@ -188,12 +188,12 @@ proposal.function <- function(param) {
 
 Run the MCMC and plot the run.
 
-```
+```coffee
 ch2 <- mcmc_bayesian(startvals = c(1, 3), iterations = 10000)
 ```
 
 
-```
+```coffee
 par(mfrow = c(2, 1))
 rem_burnin <- 100:nrow(ch2)
 plot(ch2[, 1], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
@@ -211,7 +211,7 @@ lines(x = c(mean(x), mean(x)), y = c(0, 4), col = "red", lwd = 2)
 
 ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-131.png) 
 
-```
+```coffee
 
 par(mfrow = c(2, 1))
 plot(ch2[, 2], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
@@ -236,7 +236,7 @@ Example 3
 Now we will modify the proposal function to make very small moves. This will result in inefficient sampling, and difficulty in finding the stationary distribution.
 
 
-```
+```coffee
 proposal.function <- function(param) {
     return(c(rnorm(1, mean = param[1], sd = 0.01), abs(rnorm(1, mean = param[2], 
         sd = 0.01))))  # the abs is so that there is to avoid negative proposals for the starndard deviation
@@ -245,13 +245,13 @@ proposal.function <- function(param) {
 
 As before, run the MCMC:
 
-```
+```coffee
 ch3 <- mcmc_bayesian(startvals = c(5, 3), iterations = 10000)
 ```
 
 Produce similar plots to those of the previous examples:
 
-```
+```coffee
 par(mfrow = c(2, 1))
 rem_burnin <- 100:nrow(ch3)
 plot(ch3[, 1], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
@@ -269,7 +269,7 @@ lines(x = c(mean(x), mean(x)), y = c(0, 4), col = "red", lwd = 2)
 
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-161.png) 
 
-```
+```coffee
 
 par(mfrow = c(2, 1))
 plot(ch3[, 2], type = "l", xlab = "MCMC step", ylab = expression(paste("Estimate of ", 
